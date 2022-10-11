@@ -2,63 +2,73 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void swap(int *x, int *y);
-void quicksort_recursion(int array[], size_t lo, size_t hi);
-int partition(int array[], size_t lo, size_t hi);
+void quicksort_recursion(int *array, int lo, int hi, size_t size);
+int partition(int *array, int lo, int hi, size_t size);
 
 /**
- * swap - Swap two integers in an array.
- * @x: Pointer to int x.
- * @y: Pointer to int y.
- */
-void swap(int *x, int *y)
-{
-	int tmp = *x;
-
-	*x = *y;
-	*y = tmp;
-}
-
-/**
- * quick_sort - Function that sort an array of integers in
- * ascending order using the quick sort algorithm.
- * @array: Array of integers.
- * @size: length of @array.
+ *quick_sort - sorts an array of integers with quick sort algorithm
+ *@array: the array to sort
+ *@size: the size of the array
+ *
+ *Return: void
  */
 void quick_sort(int *array, size_t size)
 {
-	quicksort_recursion(array, 0, size - 1);
+	quicksort_recursion(array, 0, size - 1, size);
 }
 
 /**
- * quicksort_recursion - Recursive divide && conquer algorithm.
- * @lo: First index -> 0.
- * @hi: last index.
+ *partition - partitions the array using the rightmost index as pivot
+ *@array: the array to partition
+ *@low: the lower index of the subarray
+ *@high: the higher index of the subarray
+ *@size: size of the array
+ *
+ *Return: the index position of the partitioned element
  */
-void quicksort_recursion(int array[], size_t lo, size_t hi)
+int partition(int *array, int low, int high, size_t size)
 {
-	int pivot_index = partition(array, lo, hi);
-	quicksort_recursion(array, lo, pivot_index - 1);
-	quicksort_recursion(array, pivot_index + 1, hi);
-}
+	int pivot, wall, i = low, swap_temp;
 
-/**
- * partition - Get pivot index.
- * @lo: index 0.
- * @hi: last index value.
- */
-int partition(int array[], size_t lo, size_t hi)
-{
-	int pivot_value = array[hi];
-	size_t i, j = lo;
+	pivot = array[high];
+	wall = low - 1;
 
-	for (; j < hi; j++)
-		if (array[j] <= pivot_value)
+	while (i <= high)
+	{
+		if (array[i] <= pivot)
 		{
-			swap(&array[i], &array[j]);
-			i++;
+			wall++;
+			if (wall != i)
+			{
+				swap_temp = array[wall];
+				array[wall] = array[i];
+				array[i] = swap_temp;
+				print_array(array, size);
+			}
 		}
-	swap(&array[i], &array[hi]);
+		i++;
+	}
+	return (wall);
+}
 
-	return (i);
+/**
+ *quick_sort_lomuto - implements the quicksort with Lomuto partition scheme
+ *@array: the array to sort
+ *@low: the lower index of the subarray to sort
+ *@high: the higher index of the subarray to sort
+ *@size: the size of the whole array
+ *
+ *Return: void
+ */
+void quicksort_recursion(int *array, int low, int high, size_t size)
+{
+	int par_i;
+
+	if (low > high)
+		return;
+
+	par_i = partition(array, low, high, size);
+
+	quicksort_recursion(array, low, par_i - 1, size);
+	quicksort_recursion(array, par_i + 1, high, size);
 }
